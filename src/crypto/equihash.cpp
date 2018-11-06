@@ -19,7 +19,7 @@
 #include "sodium.h"
 #include "crypto/equihash.h"
 #include "util.h"
-
+#include "compat/endian.h"
 #include <exception>
 #include <algorithm>
 #include <iostream>
