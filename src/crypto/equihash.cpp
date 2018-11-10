@@ -334,7 +334,7 @@ bool Equihash<N,K>::BasicSolve(const eh_HashState& base_state,
     eh_index init_size { 1 << (CollisionBitLength + 1) };
 
     // 1) Generate first list
-    LogPrint("pow", "Generating first list\n");
+   // LogPrint("pow", "Generating first list\n");
     size_t hashLen = HashLength;
     size_t lenIndices = sizeof(eh_index);
     std::vector<FullStepRow<FullWidth>> X;
@@ -350,7 +350,7 @@ bool Equihash<N,K>::BasicSolve(const eh_HashState& base_state,
 
     // 3) Repeat step 2 until 2n/(k+1) bits remain
     for (size_t r = 1; r < K && X.size() > 0; r++) {
-        LogPrint("pow", "Round %d:\n", r);
+        //LogPrint("pow", "Round %d:\n", r);
         // 2a) Sort the list
         LogPrint("pow", "- Sorting list\n");
         std::sort(X.begin(), X.end(), CompareSR(CollisionByteLength));
@@ -405,11 +405,11 @@ bool Equihash<N,K>::BasicSolve(const eh_HashState& base_state,
     }
 
     // k+1) Find a collision on last 2n(k+1) bits
-    LogPrint("pow", "Final round:\n");
+    //LogPrint("pow", "Final round:\n");
     if (X.size() > 1) {
-        LogPrint("pow", "- Sorting list\n");
+        //LogPrint("pow", "- Sorting list\n");
         std::sort(X.begin(), X.end(), CompareSR(hashLen));
-        LogPrint("pow", "- Finding collisions\n");
+        //LogPrint("pow", "- Finding collisions\n");
         size_t i = 0;
         while (i < X.size() - 1) {
             size_t j = 1;
@@ -434,7 +434,7 @@ bool Equihash<N,K>::BasicSolve(const eh_HashState& base_state,
             i += j;
         }
     } else
-        LogPrint("pow", "- List is empty\n");
+        //LogPrint("pow", "- List is empty\n");
 
     return false;
 }
@@ -506,7 +506,7 @@ bool Equihash<N,K>::OptimisedSolve(const eh_HashState& base_state,
     {
 
         // 1) Generate first list
-        LogPrint("pow", "Generating first list\n");
+        //LogPrint("pow", "Generating first list\n");
         size_t hashLen = HashLength;
         size_t lenIndices = sizeof(eh_trunc);
         std::vector<TruncatedStepRow<TruncatedWidth>> Xt;
@@ -522,12 +522,12 @@ bool Equihash<N,K>::OptimisedSolve(const eh_HashState& base_state,
 
         // 3) Repeat step 2 until 2n/(k+1) bits remain
         for (size_t r = 1; r < K && Xt.size() > 0; r++) {
-            LogPrint("pow", "Round %d:\n", r);
+            //LogPrint("pow", "Round %d:\n", r);
             // 2a) Sort the list
-            LogPrint("pow", "- Sorting list\n");
+            //LogPrint("pow", "- Sorting list\n");
             std::sort(Xt.begin(), Xt.end(), CompareSR(CollisionByteLength));
 
-            LogPrint("pow", "- Finding collisions\n");
+            //LogPrint("pow", "- Finding collisions\n");
             size_t i = 0;
             size_t posFree = 0;
             std::vector<TruncatedStepRow<TruncatedWidth>> Xc;
@@ -584,11 +584,11 @@ bool Equihash<N,K>::OptimisedSolve(const eh_HashState& base_state,
         }
 
         // k+1) Find a collision on last 2n(k+1) bits
-        LogPrint("pow", "Final round:\n");
+        //LogPrint("pow", "Final round:\n");
         if (Xt.size() > 1) {
-            LogPrint("pow", "- Sorting list\n");
+            //LogPrint("pow", "- Sorting list\n");
             std::sort(Xt.begin(), Xt.end(), CompareSR(hashLen));
-            LogPrint("pow", "- Finding collisions\n");
+            //LogPrint("pow", "- Finding collisions\n");
             size_t i = 0;
             while (i < Xt.size() - 1) {
                 size_t j = 1;
@@ -611,14 +611,14 @@ bool Equihash<N,K>::OptimisedSolve(const eh_HashState& base_state,
                 i += j;
             }
         } else
-            LogPrint("pow", "- List is empty\n");
+            //LogPrint("pow", "- List is empty\n");
 
     } // Ensure Xt goes out of scope and is destroyed
 
-    LogPrint("pow", "Found %d partial solutions\n", partialSolns.size());
+    //LogPrint("pow", "Found %d partial solutions\n", partialSolns.size());
 
     // Now for each solution run the algorithm again to recreate the indices
-    LogPrint("pow", "Culling solutions\n");
+    //LogPrint("pow", "Culling solutions\n");
     for (std::shared_ptr<eh_trunc> partialSoln : partialSolns) {
         std::set<std::vector<unsigned char>> solns;
         size_t hashLen;
@@ -696,7 +696,7 @@ bool Equihash<N,K>::OptimisedSolve(const eh_HashState& base_state,
 invalidsolution:
         invalidCount++;
     }
-    LogPrint("pow", "- Number of invalid solutions found: %d\n", invalidCount);
+    //LogPrint("pow", "- Number of invalid solutions found: %d\n", invalidCount);
 
     return false;
 }
@@ -706,7 +706,7 @@ template<unsigned int N, unsigned int K>
 bool Equihash<N,K>::IsValidSolution(const eh_HashState& base_state, std::vector<unsigned char> soln)
 {
     if (soln.size() != SolutionWidth) {
-        LogPrint("pow", "Invalid solution length: %d (expected %d)\n",
+        //LogPrint("pow", "Invalid solution length: %d (expected %d)\n",
                  soln.size(), SolutionWidth);
         return false;
     }
@@ -726,17 +726,17 @@ bool Equihash<N,K>::IsValidSolution(const eh_HashState& base_state, std::vector<
         std::vector<FullStepRow<FinalFullWidth>> Xc;
         for (size_t i = 0; i < X.size(); i += 2) {
             if (!HasCollision(X[i], X[i+1], CollisionByteLength)) {
-                LogPrint("pow", "Invalid solution: invalid collision length between StepRows\n");
-                LogPrint("pow", "X[i]   = %s\n", X[i].GetHex(hashLen));
-                LogPrint("pow", "X[i+1] = %s\n", X[i+1].GetHex(hashLen));
+                //LogPrint("pow", "Invalid solution: invalid collision length between StepRows\n");
+                //LogPrint("pow", "X[i]   = %s\n", X[i].GetHex(hashLen));
+                //LogPrint("pow", "X[i+1] = %s\n", X[i+1].GetHex(hashLen));
                 return false;
             }
             if (X[i+1].IndicesBefore(X[i], hashLen, lenIndices)) {
-                LogPrint("pow", "Invalid solution: Index tree incorrectly ordered\n");
+                //LogPrint("pow", "Invalid solution: Index tree incorrectly ordered\n");
                 return false;
             }
             if (!DistinctIndices(X[i], X[i+1], hashLen, lenIndices)) {
-                LogPrint("pow", "Invalid solution: duplicate indices\n");
+                //LogPrint("pow", "Invalid solution: duplicate indices\n");
                 return false;
             }
             Xc.emplace_back(X[i], X[i+1], hashLen, lenIndices, CollisionByteLength);
