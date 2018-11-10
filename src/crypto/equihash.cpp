@@ -611,7 +611,8 @@ bool Equihash<N,K>::OptimisedSolve(const eh_HashState& base_state,
                 i += j;
             }
         } else
-            //LogPrint("pow", "- List is empty\n");
+            LogPrint("pow", "- List is empty\n");
+            
 
     } // Ensure Xt goes out of scope and is destroyed
 
