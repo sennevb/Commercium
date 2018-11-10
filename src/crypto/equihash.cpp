@@ -707,7 +707,7 @@ template<unsigned int N, unsigned int K>
 bool Equihash<N,K>::IsValidSolution(const eh_HashState& base_state, std::vector<unsigned char> soln)
 {
     if (soln.size() != SolutionWidth) {
-        //LogPrint("pow", "Invalid solution length: %d (expected %d)\n",
+        LogPrint("pow", "Invalid solution length: %d (expected %d)\n",
                  soln.size(), SolutionWidth);
         return false;
     }
